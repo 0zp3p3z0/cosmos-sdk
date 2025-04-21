@@ -35,6 +35,16 @@ var _ types.MsgServer = msgServer{}
 
 // CreateValidator defines a method for creating a new validator
 func (k msgServer) CreateValidator(ctx context.Context, msg *types.MsgCreateValidator) (*types.MsgCreateValidatorResponse, error) {
+
+	//modify the minimal staking amount
+
+	if msg.Value.Amount.LT(sdk.NewInt(1000000000)) { // 1000 HRG (assuming 6 decimals)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Minimum 1000 HRG required to become validator")
+	}
+
+	
+	
+
 	valAddr, err := k.validatorAddressCodec.StringToBytes(msg.ValidatorAddress)
 	if err != nil {
 		return nil, sdkerrors.ErrInvalidAddress.Wrapf("invalid validator address: %s", err)
